@@ -1,2 +1,1 @@
-telepot
-requests
+python-telegram-bot
