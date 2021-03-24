@@ -1,3 +1,4 @@
+from telegram.ext import Updater
 import requests
 
 target_url = ""
@@ -12,9 +13,12 @@ def page_updated():
     global older
     if not older:
         older = requests.get(target_url).text
-    page_data = requests.get(target_url).text
+        return False
 
+    page_data = requests.get(target_url).text
     if page_data != older:
         return True
     return False
 
+def main():
+    updater = Updater(token)
