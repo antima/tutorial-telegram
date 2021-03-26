@@ -18,21 +18,22 @@ def page_updated():
     older = requests.get(target_url).text
 
     while True:
-        page_data = requests.get(target_url).text
-        if page_data != older:
-            older = page_data
-            for chat_id in chat_ids:
-                updater.bot.send_message(chat_id=chat_id, text="Pagina aggiornata!")
+        if len(chat_ids) > 0:
+            page_data = requests.get(target_url).text
+            if page_data != older:
+                older = page_data
+                for chat_id in chat_ids:
+                    updater.bot.send_message(chat_id=chat_id, text="Pagina aggiornata!")
         time.sleep(interval)
 
 
-def start(update, _):
+def start(update, context):
     chat_id = update.effective_chat.id
     chat_ids.add(chat_id)
     logging.info("{}: start".format(chat_id))
 
 
-def end(update, _):
+def end(update, context):
     chat_id = update.effective_chat.id
     chat_ids.remove(chat_id)
     logging.info("{}: stop".format(chat_id))
@@ -43,6 +44,7 @@ def main():
     updater.dispatcher.add_handler(CommandHandler("end", end))
     threading.Thread(target=page_updated).start()
     updater.start_polling()
+    updater.idle()
 
 
 if __name__ == "__main__":
